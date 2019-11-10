@@ -7,14 +7,14 @@ def choosePattern(n):
         pattern.append(random.choice(list(Color)))
     return pattern
 
-def guess(n):
+def guess(n, pegs):
     while True:
         try:
-            pattern = list(map(lambda s: Color[s], input(f"Enter your guess ({n:d} pegs):").split()))
+            pattern = list(map(lambda s: Color[s.lower()], input(f"Attempt {n:d}: ").split()))
         except KeyError as err:
             print(f"No such color: {err.args[0]:s}")
             continue
-        if len(pattern) == n:
+        if len(pattern) == pegs:
             break
     print("Your guess:", " ".join(list(map(lambda c: c.name, pattern))))
     return pattern
@@ -42,10 +42,13 @@ def main():
     num_pegs = 4
     master_pattern = choosePattern(num_pegs)
     # print(master_pattern)
+    print(f"{num_pegs:d} pegs, {len(Color):d} colors")
+    print("The colors are:", ", ".join([e.name for e in Color]))
+    print("You may abbreviate them by typing only the first letter")
     num_guesses = 0
     while True:
-        player_pattern = guess(num_pegs)
         num_guesses += 1
+        player_pattern = guess(num_guesses, num_pegs)
         black, white = rate(master_pattern, player_pattern)
         print(f"Black pegs: {black:d}, White pegs: {white:d}")
         if black == 4:
