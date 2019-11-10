@@ -10,24 +10,47 @@ def choosePattern(n):
 def guess(n):
     while True:
         try:
-            pattern = list(map(lambda s: Color[s], input(f"Enter your guess ({n:d} colors):").split()))
+            pattern = list(map(lambda s: Color[s], input(f"Enter your guess ({n:d} pegs):").split()))
         except KeyError as err:
             print(f"No such color: {err.args[0]:s}")
             continue
-        print(pattern)
         if len(pattern) == n:
             break
     print("Your guess:", " ".join(list(map(lambda c: c.name, pattern))))
     return pattern
 
+def rate(master, guess):
+    assert(len(master) == len(guess))
+    black, white = 0, 0
+    master_not_rated = master[:]
+    guess = guess[:] # copy guess
+
+    for i in range(len(guess)):
+        if guess[i] == master[i]:
+            black += 1
+            master_not_rated[i] = None
+            guess[i] = None
+
+    for i in range(len(guess)):
+        if guess[i] != None and guess[i] in master_not_rated:
+            white += 1
+            master_not_rated[master_not_rated.index(guess[i])] = None
+
+    return black, white
+
 def main():
     num_pegs = 4
     master_pattern = choosePattern(num_pegs)
-    print(master_pattern)
+    # print(master_pattern)
+    num_guesses = 0
     while True:
         player_pattern = guess(num_pegs)
-        if player_pattern == master_pattern:
-            print("You win!")
+        num_guesses += 1
+        black, white = rate(master_pattern, player_pattern)
+        print(f"Black pegs: {black:d}, White pegs: {white:d}")
+        if black == 4:
+            print(f"You win after {num_guesses:d} attempt(s)!")
+            print("The code was:", " ".join(list(map(lambda c: c.name, master_pattern))))
             break
     
 
