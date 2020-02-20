@@ -1,6 +1,7 @@
 from colors import Color
 import codebreaker as cb
 import random
+import argparse
 
 def choosePattern(n):
     pattern = []
@@ -48,11 +49,23 @@ def game_loop(num_pegs, master_pattern, breaker):
 
 if __name__ == "__main__":
     try:
-        pegs = 4
-        knuth = cb.Knuth(pegs)
-        player = cb.Player(pegs)
-        master_pattern = choosePattern(pegs)
-        game_loop(pegs, master_pattern, player)
+        parser = argparse.ArgumentParser(description="MASTERMIND Break the code using the hints you get. N black pegs --> correct color and position for N pegs of your guess, N white pegs --> correct color but wrong position for N pegs of your guess")
+        breakerargs = parser.add_mutually_exclusive_group()
+        breakerargs.add_argument("-p", "--player", action="store_const", const="p", dest="breakertype", help="break the code yourself")
+        breakerargs.add_argument("-k", "--knuth", action="store_const", const="k", dest="breakertype", help="use Knuth's algorithm to break the code")
+        parser.add_argument("pegs", type=int, metavar="PEGS", default=4, help="number of pegs used in the game", nargs="?")
+        args = parser.parse_args()
+        
+        if args.breakertype == "k":
+            breaker = cb.Knuth(args.pegs)
+        elif args.breakertype == "p":
+            breaker = cb.Player(args.pegs)
+        else:
+            breaker = cb.Player(args.pegs)
+
+        master_pattern = choosePattern(args.pegs)
+        print("The code is:", format_pattern(master_pattern))
+        game_loop(args.pegs, master_pattern, breaker)
     except KeyboardInterrupt as _:
         print("")  # newline to tidy up console
         print("You conceded! The code was:", format_pattern(master_pattern))
