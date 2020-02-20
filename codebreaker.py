@@ -108,18 +108,3 @@ class Knuth(Codebreaker):
     def prune_solutions(self, rating, guess):
         import game
         return list(filter(lambda pattern: game.rate(pattern, guess) == rating, self.solutions))
-
-
-if __name__ == "__main__":
-    try:
-        k = Knuth(6, 4)
-        p = Player(6, 4)
-        # k.guesses.append([Color(0), Color(0), Color(0), Color(0)])
-        # print(k.guess(None))
-        # print(k.guess((3, 0)))
-        # print(k.guess((2, 0)))
-        # print(k.guess((2, 2)))
-        # print(k.solutions)
-        # print(k.rating_scores)
-    except KeyboardInterrupt as _:
-        print("")  # newline to tidy up console

@@ -40,7 +40,7 @@ def game_loop(num_pegs, master_pattern, breaker):
         num_guesses += 1
         pattern = breaker.guess(last_rating, num_guesses)
         last_rating = rate(master_pattern, pattern)
-        if last_rating[0] == 4:
+        if last_rating[0] == num_pegs:
             print(f"You win after {num_guesses:d} attempt(s)!")
             print("The code was:", format_pattern(master_pattern))
             break
