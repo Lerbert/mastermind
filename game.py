@@ -1,4 +1,5 @@
 from colors import Color
+import codebreaker as cb
 import random
 
 def choosePattern(n):
@@ -7,17 +8,8 @@ def choosePattern(n):
         pattern.append(random.choice(list(Color)))
     return pattern
 
-def guess(n, pegs):
-    while True:
-        try:
-            pattern = list(map(lambda s: Color[s.lower()], input(f"Attempt {n:d}: ").split()))
-        except KeyError as err:
-            print(f"No such color: {err.args[0]:s}")
-            continue
-        if len(pattern) == pegs:
-            break
-    print("Your guess:", " ".join(list(map(lambda c: c.name, pattern))))
-    return pattern
+def format_pattern(pattern):
+    return " ".join(list(map(lambda c: c.name, pattern)))
 
 def rate(master, guess):
     assert(len(master) == len(guess))
@@ -38,27 +30,29 @@ def rate(master, guess):
 
     return black, white
 
-def main():
-    num_pegs = 4
-    master_pattern = choosePattern(num_pegs)
-    # print(master_pattern)
+def game_loop(num_pegs, master_pattern, breaker):
     print(f"{num_pegs:d} pegs, {len(Color):d} colors")
     print("The colors are:", ", ".join([e.name for e in Color]))
     print("You may abbreviate them by typing only the first letter")
     num_guesses = 0
+    last_rating = None
     while True:
         num_guesses += 1
-        player_pattern = guess(num_guesses, num_pegs)
-        black, white = rate(master_pattern, player_pattern)
-        print(f"Black pegs: {black:d}, White pegs: {white:d}")
-        if black == 4:
+        pattern = breaker.guess(last_rating, num_guesses)
+        last_rating = rate(master_pattern, pattern)
+        if last_rating[0] == 4:
             print(f"You win after {num_guesses:d} attempt(s)!")
-            print("The code was:", " ".join(list(map(lambda c: c.name, master_pattern))))
+            print("The code was:", format_pattern(master_pattern))
             break
     
 
 if __name__ == "__main__":
     try:
-        main()
+        pegs = 4
+        knuth = cb.Knuth(pegs)
+        player = cb.Player(pegs)
+        master_pattern = choosePattern(pegs)
+        game_loop(pegs, master_pattern, player)
     except KeyboardInterrupt as _:
         print("")  # newline to tidy up console
+        print("You conceded! The code was:", format_pattern(master_pattern))

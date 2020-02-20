@@ -1,16 +1,53 @@
 from colors import Color
+from abc import ABC, abstractmethod
 
 def flatten(list):
     return [it for sublist in list for it in sublist]
 
-class Knuth:
-    def __init__(self, num_colors, num_pegs):
-        self.num_colors = num_colors
+class Codebreaker(ABC):
+    def __init__(self, num_pegs):
+        self.num_colors = len(Color)
         self.num_pegs = num_pegs
+    
+    @abstractmethod
+    def guess(self, last_rating, num_tries):
+        pass
+
+class Player(Codebreaker):
+    def guess(self, last_rating, num_tries):
+        if last_rating != None:
+            print(f"Black pegs: {last_rating[0]:d}, White pegs: {last_rating[1]:d}")
+        pattern = self.input_pattern(num_tries)
+        print("Your guess:", " ".join(list(map(lambda c: c.name, pattern))))
+        return pattern
+
+    def input_pattern(self, num_tries):
+        while True:
+            try:
+                pattern = list(map(lambda s: Color[s.lower()], input(f"Attempt {num_tries:d}: ").split()))
+            except KeyError as err:
+                print(f"No such color: {err.args[0]:s}")
+                continue
+            if len(pattern) == self.num_pegs:
+                break
+            print(f"You need to guess all {self.num_pegs:d} pegs.")
+        return pattern
+
+
+class Knuth(Codebreaker):
+    def __init__(self, num_pegs):
+        super().__init__(num_pegs)
         self.guesses = []
         self.generate_all_combinations()
         self.generate_ratings()
         self.solutions = self.all[:]
+
+    def guess(self, last_rating, _):
+        if last_rating != None:
+            print(f"Black pegs: {last_rating[0]:d}, White pegs: {last_rating[1]:d}")
+        pattern = self.knuth_algorithm(last_rating)
+        print("Knuth's guess:", " ".join(list(map(lambda c: c.name, pattern))))
+        return pattern
 
     def generate_all_combinations(self):
         if self.num_pegs == 0:
@@ -34,9 +71,8 @@ class Knuth:
                     continue
                 self.rating_scores[(black, white)] = 0
 
-
     # Knuth's algorithm, see https://en.wikipedia.org/wiki/Mastermind_(board_game)#Five-guess_algorithm
-    def guess(self, last_rating):
+    def knuth_algorithm(self, last_rating):
         if self.guesses == [] and last_rating == None:
             if self.num_pegs == 4 and self.num_colors > 1:
                 # return original guess of Knuth
@@ -77,11 +113,12 @@ class Knuth:
 if __name__ == "__main__":
     try:
         k = Knuth(6, 4)
+        p = Player(6, 4)
         # k.guesses.append([Color(0), Color(0), Color(0), Color(0)])
-        print(k.guess(None))
-        print(k.guess((3, 0)))
-        print(k.guess((2, 0)))
-        print(k.guess((2, 2)))
+        # print(k.guess(None))
+        # print(k.guess((3, 0)))
+        # print(k.guess((2, 0)))
+        # print(k.guess((2, 2)))
         # print(k.solutions)
         # print(k.rating_scores)
     except KeyboardInterrupt as _:
