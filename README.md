@@ -1,7 +1,7 @@
 # mastermind
 A command line version of the mastermind game. You can try to break the code yourself or watch [Donald Knuth's algorithm](https://en.wikipedia.org/wiki/Mastermind_(board_game)#Five-guess_algorithm) do the work.
 ```
-usage: game.py [-h] [-p | -k] [PEGS]
+usage: game.py [-h] [-p | -k] [-s | -r] [-c] [PEGS]
 
 MASTERMIND Break the code using the hints you get. N black pegs --> correct
 color and position for N pegs of your guess, N white pegs --> correct color
@@ -14,4 +14,7 @@ optional arguments:
   -h, --help    show this help message and exit
   -p, --player  break the code yourself
   -k, --knuth   use Knuth's algorithm to break the code
+  -s, --select  choose the code yourself
+  -r, --random  start with a random code
+  -c, --cheat   display the code at game start
   ```
