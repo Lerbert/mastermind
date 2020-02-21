@@ -1,5 +1,6 @@
-from colors import Color
 from abc import ABC, abstractmethod
+
+from colors import Color
 
 def flatten(list):
     return [it for sublist in list for it in sublist]

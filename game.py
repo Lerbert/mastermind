@@ -1,13 +1,7 @@
-from colors import Color
-import codebreaker as cb
-import random
 import argparse
 
-def choosePattern(n):
-    pattern = []
-    for _ in range(n):
-        pattern.append(random.choice(list(Color)))
-    return pattern
+from colors import Color
+import codebreaker as cb
 
 def format_pattern(pattern):
     return " ".join(list(map(lambda c: c.name, pattern)))
